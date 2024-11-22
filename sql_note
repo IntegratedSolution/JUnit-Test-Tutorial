@@ -1,0 +1,25 @@
+CREATE TABLE members (
+    id SERIAL PRIMARY KEY,                   -- Auto-incrementing primary key
+    member_no VARCHAR(20) NOT NULL,           -- Member number (Assuming max length of 20)
+    name VARCHAR(255) NOT NULL,               -- Member name
+    address VARCHAR(255),                     -- Member address
+    phone VARCHAR(15),                        -- Phone number
+    gender VARCHAR(10),                       -- Gender (Assuming values like 'male', 'female', etc.)
+    comment TEXT,                             -- Additional comments
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp for record creation
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Timestamp for record update
+);
+
+CREATE OR REPLACE FUNCTION generate_member_no()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Pad the `id` to 5 digits (e.g., 00001, 00002, etc.)
+    NEW.member_no := LPAD(NEW.id::TEXT, 5, '0');  
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_member_no
+BEFORE INSERT ON members
+FOR EACH ROW
+EXECUTE FUNCTION generate_member_no();

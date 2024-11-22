@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.MemberMapper">
+ <!-- Get all members -->
+    <select id="getAllMembers" resultType="com.example.demo.model.Member">
+        SELECT id, member_no memberNo, name, address, phone, gender, comment, created_at createdAt, updated_at
+        FROM members;
+    </select>
+
+    <!-- Insert a new member -->
+    <insert id="insertMember">
+	    INSERT INTO members (name, address, phone, gender, comment, created_at, updated_at)
+	    VALUES (#{name}, #{address}, #{phone}, #{gender}, #{comment}, NOW(), NOW());
+	</insert>
+</mapper>
