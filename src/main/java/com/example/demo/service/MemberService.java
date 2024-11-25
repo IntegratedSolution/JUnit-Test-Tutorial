@@ -13,10 +13,10 @@ public class MemberService {
 	@Autowired
     private MemberMapper memberMapper;
 
-    public List<Member> getMembers() {
-        return memberMapper.getAllMembers();
-    }
-
+	public List<Member> getAllMembers(String memberNo, String name, String phone, String gender) {
+	    return memberMapper.getAllMembers(memberNo, name, phone, gender);
+	}
+	
     public void addMember(Member member) {
     	memberMapper.insertMember(member);
     }

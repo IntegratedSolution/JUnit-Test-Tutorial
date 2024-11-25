@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,12 +28,6 @@ public class HomeController {
         return "index";
     }
 
-    @GetMapping("/search")
-    public String search(Model model) {
-        model.addAttribute("title", "会員検索");
-        return "search";
-    }
-
     @GetMapping("/register")
     public String showRegistrationForm(@ModelAttribute("member") Member member, Model model) {    	 
     	if (member == null) {
@@ -51,25 +44,72 @@ public class HomeController {
              member = new Member();
          }
          model.addAttribute("member", member);
-        return "register"; 
+        return "confirm"; 
+    }
+    
+    @PostMapping("/register/confirm")
+    public String registerConfirm(Model model, HttpSession session) {
+    	Member member = (Member) session.getAttribute("member");
+        if (member == null) {
+            member = new Member(); 
+        }
+        memberService.addMember(member); 
+        session.removeAttribute("member"); 
+        model.addAttribute("member", member);
+        return "redirect:/member-list";
     }
 
     @PostMapping("/submit")
-    public String submitForm(@ModelAttribute Member member, Model model, HttpSession session) {
+    public String submitForm(@ModelAttribute Member member,HttpSession session,Model model) {
     	session.setAttribute("member", member);
-        model.addAttribute("member", member); 
-        memberService.addMember(member);
-        return "confirm";
+        if (member.getName() == null || member.getName().isEmpty()) {
+            model.addAttribute("nameError", "名前は必須です。");
+        }
+
+        // Validate the phone field
+        if (member.getPhone() == null ) { //|| !member.getPhone().matches("\\d{10}")
+            model.addAttribute("phoneError", "電話番号は10桁の数字である必要があります。");
+        }
+        
+        // Validate the address field
+        if (member.getAddress()== null ||member.getName().isEmpty()) {
+            model.addAttribute("addressError", "住所は必須です。");
+        }
+
+        // Validate the gender field
+        if (member.getGender() == null || member.getGender().isEmpty()) {
+            model.addAttribute("genderError", "性別は必須です。");
+        }
+
+        if (model.containsAttribute("nameError") || model.containsAttribute("phoneError") || model.containsAttribute("genderError")) {
+            return "register";
+        }
+
+    	 return "redirect:/register/confirm"; 
     }
+    
+    @GetMapping("/register/back")
+    public String backToRegistrationForm(HttpSession session, Model model) {
+        Member member = (Member) session.getAttribute("member");
+        if (member == null) {
+            member = new Member(); 
+        }
+        model.addAttribute("member", member);
+        return "register";  
+    }
+
     
     @GetMapping("/member-list")
     public String getAllMembers(@RequestParam(required = false) String memberNo,
                                  @RequestParam(required = false) String name,
                                  @RequestParam(required = false) String phone,
+                                 @RequestParam(required = false) String gender,
                                  Model model) {
-        List<Member> members = memberService.getMembers();
-        
+        List<Member> members = memberService.getAllMembers(memberNo, name, phone, gender);
+
         model.addAttribute("members", members);
+        model.addAttribute("title", "会員検索");
+
         return "members";
     }
     

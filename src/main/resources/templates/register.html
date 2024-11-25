@@ -11,6 +11,10 @@
             color: red;
             margin-right: 5px;
         }
+        .textErrStyle{
+        	color: red;
+        	font-size: small;
+        }
     </style>
 </head>
 <body>
@@ -19,13 +23,15 @@
     	<div th:replace="layout :: navbar"></div>
         <h1 class="text-center mt-2">会員登録</h1>
         <div class="form-container">
-            <form th:action="@{/submit}" method="post" th:object="${member}" class="row g-4 small-form">
+        <!-- -->
+            <form  th:action="@{/submit}" method="post" th:object="${member}" class="row g-4 small-form">
                 <!-- Name Field -->
                 <div class="col-md-3" style="text-align:right">
                     <label for="name" class="form-label mandatory">名称</label>
                 </div>
                 <div class="col-md-8">
                     <input type="text" class="form-control form-control-sm" id="name" th:field="*{name}" placeholder="名称を入力してください。">
+                    <span class="error-message textErrStyle" th:if="${nameError}" th:text="${nameError}">Error</span>
                 </div>
 
                 <!-- Phone Field -->
@@ -34,6 +40,7 @@
                 </div>
                 <div class="col-md-8">
                     <input type="tel" class="form-control form-control-sm" id="phone" th:field="*{phone}" placeholder="電話を入力してください。">
+                    <span class="error-message textErrStyle" th:if="${phoneError}" th:text="${phoneError}">Error</span>
                 </div>
 
                 <!-- Address Field -->
@@ -42,6 +49,7 @@
                 </div>
                 <div class="col-md-8">
                     <input type="text" class="form-control form-control-sm" id="address" th:field="*{address}" placeholder="住所を入力してください。">
+                    <span class="error-message textErrStyle" th:if="${addressError}" th:text="${addressError}">Error</span>
                 </div>
 
                 <!-- Gender Radio Buttons -->
@@ -61,6 +69,7 @@
                         <input class="form-check-input" type="radio" th:field="*{gender}" id="other" value="other">
                         <label class="form-check-label" for="other">他</label>
                     </div>
+                    <div><span class="error-message textErrStyle" th:if="${genderError}" th:text="${genderError}">Error</span></div>                
                 </div>
 
                 <!-- Comment Field -->
@@ -73,7 +82,7 @@
 
                 <!-- Submit Button -->
                 <div class="col-12 d-flex justify-content-center">
-                    <button type="submit" class="btn btn-primary w-20">登録</button>
+                    <button type="submit" class="btn btn-primary w-20">確認</button>
                 </div>
             </form>
         </div>
